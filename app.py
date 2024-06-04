@@ -24,58 +24,32 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
 ]
 
+# Model name
+MODEL_NAME = "gemini-1.5-pro-latest"
+
 # Create the model
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro",
+    model_name=MODEL_NAME,
     safety_settings=safety_settings,
     generation_config=generation_config,
-    system_instruction="Describe this UI in accurate details. When you reference a UI element put its name and bounding box in the format: [object name (y_min, x_min, y_max, x_max)]. Also Describe the color of the elements.",
 )
 
-# Function to refine the description with image
-def refine_description_with_image(description, image_path):
-    model_refine_description = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
-        safety_settings=safety_settings,
-        generation_config=generation_config,
-        system_instruction="Compare the described UI elements with the provided image and identify any missing elements or inaccuracies. Also Describe the color of the elements. Provide a refined and accurate description of the UI elements based on this comparison.",
-    )
-    chat_session_refine_description = model_refine_description.start_chat(history=[])
+# Start a chat session
+chat_session = model.start_chat(history=[])
+
+# Function to send a message to the model
+def send_message_to_model(message, image_path):
     image_input = {
         'mime_type': 'image/jpeg',
         'data': pathlib.Path(image_path).read_bytes()
     }
-    response_refine_description = chat_session_refine_description.send_message([description, image_input])
-    return response_refine_description.text
-
-# Function to generate HTML from description
-def generate_html(description):
-    model_html = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
-        safety_settings=safety_settings,
-        generation_config=generation_config,
-        system_instruction="Create an HTML file based on the following UI description, using the UI elements described in the previous response. Include inline CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS.",
-    )
-    chat_session_html = model_html.start_chat(history=[])
-    response_html = chat_session_html.send_message("Generate an HTML file with inline CSS for the described UI: " + description)
-    return response_html.text
-
-# Function to refine HTML
-def refine_html(description, initial_html):
-    model_refine = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
-        safety_settings=safety_settings,
-        generation_config=generation_config,
-        system_instruction="Validate the following HTML code based on the UI description and provide a refined version of the HTML code with inline CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS.",
-    )
-    chat_session_refine = model_refine.start_chat(history=[])
-    response_refine = chat_session_refine.send_message("Refine the HTML code based on the description and the initial HTML code: " + initial_html)
-    return response_refine.text
+    response = chat_session.send_message([message, image_input])
+    return response.text
 
 # Streamlit app
 def main():
     st.title("Gemini 1.5 Pro, UI to Code 👨‍💻 ")
-    st.subheader('Made with ❤️ by [Skirano](https://x.com/skirano)')
+    st.subheader('Made with ❤️ by [Skirano](https://cursor.sh/)')
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
@@ -96,28 +70,26 @@ def main():
             # Generate UI description
             if st.button("Describe UI"):
                 st.write("🧑‍💻 Looking at your UI...")
-                prompt = "Analyze this image and describe the UI elements in detail."
-                image_input = {
-                    'mime_type': 'image/jpeg',
-                    'data': temp_image_path.read_bytes()
-                }
-                response = model.start_chat(history=[]).send_message([prompt, image_input])
-                description = response.text
+                prompt = "Describe this UI in accurate details. When you reference a UI element put its name and bounding box in the format: [object name (y_min, x_min, y_max, x_max)]. Also Describe the color of the elements. And icons in size."
+                description = send_message_to_model(prompt, temp_image_path)
                 st.write(description)
 
                 # Refine the description
                 st.write("🔍 Refining description with visual comparison...")
-                refined_description = refine_description_with_image(description, temp_image_path)
+                refine_prompt = f"Compare the described UI elements with the provided image and identify any missing elements or inaccuracies. Also Describe the color of the elements. And icons in size. Provide a refined and accurate description of the UI elements based on this comparison. Here is the initial description: {description}"
+                refined_description = send_message_to_model(refine_prompt, temp_image_path)
                 st.write(refined_description)
 
                 # Generate HTML
                 st.write("🛠️ Generating website...")
-                initial_html = generate_html(refined_description)
+                html_prompt = f"Create an HTML file based on the following UI description, and image, using the UI elements described in the previous response. Include inline CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. Use svg for icons with appropiate sizes. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Here is the refined description: {refined_description}"
+                initial_html = send_message_to_model(html_prompt, temp_image_path)
                 st.code(initial_html, language='html')
 
                 # Refine HTML
                 st.write("🔧 Refining website...")
-                refined_html = refine_html(refined_description, initial_html)
+                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with inline CSS that improves accuracy, responsiveness, and adherence to the original design.Use svg for icons with appropiate sizes. ONLY return the refined HTML code with inline CSS. Here is the initial HTML: {initial_html}"
+                refined_html = send_message_to_model(refine_html_prompt, temp_image_path)
                 st.code(refined_html, language='html')
 
                 # Save the refined HTML to a file
@@ -132,3 +104,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
