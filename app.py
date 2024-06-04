@@ -29,7 +29,7 @@ MODEL_NAME = "gemini-1.5-pro-latest"
 
 # Framework selection (e.g., Tailwind, Bootstrap, etc.)
 # Change this to "Bootstrap" or any other framework as needed
-framework = "Tailwind CSS latest"  
+framework = "Tailwind"  
 
 
 
@@ -77,7 +77,7 @@ def main():
             # Generate UI description
             if st.button("Code UI"):
                 st.write("🧑‍💻 Looking at your UI...")
-                prompt = "Describe this UI in accurate details. When you reference a UI element put its name and bounding box in the format: [object name (y_min, x_min, y_max, x_max)]. Also Describe the color of the elements and icon sizes as well."
+                prompt = "Describe this UI in accurate details. When you reference a UI element put its name and bounding box in the format: [object name (y_min, x_min, y_max, x_max)]. Also Describe the color of the elements."
                 description = send_message_to_model(prompt, temp_image_path)
                 st.write(description)
 
@@ -89,13 +89,13 @@ def main():
 
                 # Generate HTML
                 st.write("🛠️ Generating website...")
-                html_prompt = f"Create an HTML file based on the following UI description and the provide image, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. Use svg for icons you know the link of, using the accurate sizes from description, DO NOT draw your own svg. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the refined description: {refined_description}"
+                html_prompt = f"Create an HTML file based on the following UI description and the provide image, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI.The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the refined description: {refined_description}"
                 initial_html = send_message_to_model(html_prompt, temp_image_path)
                 st.code(initial_html, language='html')
 
                 # Refine HTML
                 st.write("🔧 Refining website...")
-                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design.Use svg for icons you know the link of, using the accurate sizes from description, DO NOT draw your own svg. ONLY return the refined HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the initial HTML: {initial_html}"
+                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the initial HTML: {initial_html}"
                 refined_html = send_message_to_model(refine_html_prompt, temp_image_path)
                 st.code(refined_html, language='html')
 
