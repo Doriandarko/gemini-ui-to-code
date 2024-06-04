@@ -56,7 +56,7 @@ def send_message_to_model(message, image_path):
 # Streamlit app
 def main():
     st.title("Gemini 1.5 Pro, UI to Code 👨‍💻 ")
-    st.subheader('Made with ❤️ by [Skirano](https://cursor.sh/)')
+    st.subheader('Made with ❤️ by [Skirano](https://x.com/skirano)')
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
@@ -75,7 +75,7 @@ def main():
             image.save(temp_image_path, format="JPEG")
 
             # Generate UI description
-            if st.button("Describe UI"):
+            if st.button("Code UI"):
                 st.write("🧑‍💻 Looking at your UI...")
                 prompt = "Describe this UI in accurate details. When you reference a UI element put its name and bounding box in the format: [object name (y_min, x_min, y_max, x_max)]. Also Describe the color of the elements."
                 description = send_message_to_model(prompt, temp_image_path)
