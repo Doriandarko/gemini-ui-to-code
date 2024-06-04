@@ -27,6 +27,13 @@ safety_settings = [
 # Model name
 MODEL_NAME = "gemini-1.5-pro-latest"
 
+# Framework selection (e.g., Tailwind, Bootstrap, etc.)
+# Change this to "Bootstrap" or any other framework as needed
+framework = "Tailwind CSS latest"  
+
+
+
+
 # Create the model
 model = genai.GenerativeModel(
     model_name=MODEL_NAME,
@@ -49,7 +56,7 @@ def send_message_to_model(message, image_path):
 # Streamlit app
 def main():
     st.title("Gemini 1.5 Pro, UI to Code 👨‍💻 ")
-    st.subheader('Made with ❤️ by [Skirano](https://x.com/skirano)')
+    st.subheader('Made with ❤️ by [Skirano](https://cursor.sh/)')
 
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
@@ -82,13 +89,13 @@ def main():
 
                 # Generate HTML
                 st.write("🛠️ Generating website...")
-                html_prompt = f"Create an HTML file based on the following UI description, and image, using the UI elements described in the previous response. Include inline CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. Use svg for icons, based on links you know and the closest match, DO NOT draw your own svg. For images when needed use random unsplash images. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Here is the refined description: {refined_description}"
+                html_prompt = f"Create an HTML file based on the following UI description, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Use svg for icons using the accurate sizes from description, DO NOT draw your own svg. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the refined description: {refined_description}"
                 initial_html = send_message_to_model(html_prompt, temp_image_path)
                 st.code(initial_html, language='html')
 
                 # Refine HTML
                 st.write("🔧 Refining website...")
-                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with inline CSS that improves accuracy, responsiveness, and adherence to the original design. Use svg for icons, based on links you know and the closest match, DO NOT draw your own svg. For images when needed use random unsplash images. ONLY return the refined HTML code with inline CSS. Here is the initial HTML: {initial_html}"
+                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. Use svg for icons using the accurate sizes from description. DO NOT draw your own svg. ONLY return the refined HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the initial HTML: {initial_html}"
                 refined_html = send_message_to_model(refine_html_prompt, temp_image_path)
                 st.code(refined_html, language='html')
 
