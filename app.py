@@ -4,7 +4,7 @@ from PIL import Image
 import google.generativeai as genai
 
 # Configure the API key directly in the script
-API_KEY = 'YOUR GEMINI KEY'
+API_KEY = 'YOUR KEY'
 genai.configure(api_key=API_KEY)
 
 # Generation configuration
@@ -28,11 +28,7 @@ safety_settings = [
 MODEL_NAME = "gemini-1.5-pro-latest"
 
 # Framework selection (e.g., Tailwind, Bootstrap, etc.)
-# Change this to "Bootstrap" or any other framework as needed
-framework = "Tailwind"  
-
-
-
+framework = "Tailwind"  # Change this to "Bootstrap" or any other framework as needed
 
 # Create the model
 model = genai.GenerativeModel(
@@ -83,19 +79,19 @@ def main():
 
                 # Refine the description
                 st.write("🔍 Refining description with visual comparison...")
-                refine_prompt = f"Compare the described UI elements with the provided image and identify any missing elements or inaccuracies. Also Describe the color of the elements and icon sizes as well. Provide a refined and accurate description of the UI elements based on this comparison. Here is the initial description: {description}"
+                refine_prompt = f"Compare the described UI elements with the provided image and identify any missing elements or inaccuracies. Also Describe the color of the elements. Provide a refined and accurate description of the UI elements based on this comparison. Here is the initial description: {description}"
                 refined_description = send_message_to_model(refine_prompt, temp_image_path)
                 st.write(refined_description)
 
                 # Generate HTML
                 st.write("🛠️ Generating website...")
-                html_prompt = f"Create an HTML file based on the following UI description and the provide image, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI.The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the refined description: {refined_description}"
+                html_prompt = f"Create an HTML file based on the following UI description, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Here is the refined description: {refined_description}"
                 initial_html = send_message_to_model(html_prompt, temp_image_path)
                 st.code(initial_html, language='html')
 
                 # Refine HTML
                 st.write("🔧 Refining website...")
-                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS. Avoid using ```html. and ``` at the end. Just write the code directly. Here is the initial HTML: {initial_html}"
+                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS. Here is the initial HTML: {initial_html}"
                 refined_html = send_message_to_model(refine_html_prompt, temp_image_path)
                 st.code(refined_html, language='html')
 
