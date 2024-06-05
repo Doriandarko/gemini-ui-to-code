@@ -28,7 +28,7 @@ safety_settings = [
 MODEL_NAME = "gemini-1.5-pro-latest"
 
 # Framework selection (e.g., Tailwind, Bootstrap, etc.)
-framework = "Tailwind"  # Change this to "Bootstrap" or any other framework as needed
+framework = "Regular CSS use flex grid etc"  # Change this to "Bootstrap" or any other framework as needed
 
 # Create the model
 model = genai.GenerativeModel(
