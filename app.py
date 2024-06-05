@@ -85,13 +85,13 @@ def main():
 
                 # Generate HTML
                 st.write("🛠️ Generating website...")
-                html_prompt = f"Create an HTML file based on the following UI description, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. ONLY return the HTML code with inline CSS. Here is the refined description: {refined_description}"
+                html_prompt = f"Create an HTML file based on the following UI description, using the UI elements described in the previous response. Include {framework} CSS within the HTML file to style the elements. Make sure the colors used are the same as the original UI. The UI needs to be responsive and mobile-first, matching the original UI as closely as possible. Do not include any explanations or comments. Avoid using ```html. and ``` at the end. ONLY return the HTML code with inline CSS. Here is the refined description: {refined_description}"
                 initial_html = send_message_to_model(html_prompt, temp_image_path)
                 st.code(initial_html, language='html')
 
                 # Refine HTML
                 st.write("🔧 Refining website...")
-                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS. Here is the initial HTML: {initial_html}"
+                refine_html_prompt = f"Validate the following HTML code based on the UI description and image and provide a refined version of the HTML code with {framework} CSS that improves accuracy, responsiveness, and adherence to the original design. ONLY return the refined HTML code with inline CSS. Avoid using ```html. and ``` at the end. Here is the initial HTML: {initial_html}"
                 refined_html = send_message_to_model(refine_html_prompt, temp_image_path)
                 st.code(refined_html, language='html')
 
