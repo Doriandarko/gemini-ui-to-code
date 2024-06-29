@@ -4,12 +4,12 @@ from PIL import Image
 import google.generativeai as genai
 
 # Configure the API key directly in the script
-API_KEY = 'YOUR KEY'
+API_KEY = 'AIzaSyAiNpkMqI9F0YCSQS55lPEWjv5zXIOzKdo'
 genai.configure(api_key=API_KEY)
 
 # Generation configuration
 generation_config = {
-    "temperature": 1,
+    "temperature": 0,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -25,7 +25,7 @@ safety_settings = [
 ]
 
 # Model name
-MODEL_NAME = "gemini-1.5-pro-latest"
+MODEL_NAME = "gemini-1.5-pro"
 
 # Framework selection (e.g., Tailwind, Bootstrap, etc.)
 framework = "Regular CSS use flex grid etc"  # Change this to "Bootstrap" or any other framework as needed
